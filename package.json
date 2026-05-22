@@ -1,0 +1,28 @@
+{
+  "name": "dev_agent",
+  "version": "1.0.0",
+  "description": "an AI agent for project work and QA",
+  "main": "index.js",
+  "type": "module",
+  
+  "scripts": {
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "agent",
+    "projects"
+  ],
+  "author": "Himaghna Mankad",
+  "license": "ISC",
+  "dependencies": {
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^7.2.0",
+    "adm-zip": "^0.5.17",
+    "cohere-ai": "^8.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "langchain": "^1.4.2",
+    "multer": "^2.1.1",
+    "openai": "^6.39.0"
+  }
+}
