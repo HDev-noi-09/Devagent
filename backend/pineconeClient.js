@@ -1,5 +1,6 @@
-import { Pinecone } from '@pinecone-database/pinecone'
-
+  import { Pinecone } from '@pinecone-database/pinecone'
+  import dotenv from 'dotenv'
+dotenv.config()
 const { PINECONE_API_KEY, PINECONE_INDEX_NAME } = process.env
 
 if (!PINECONE_API_KEY) {
