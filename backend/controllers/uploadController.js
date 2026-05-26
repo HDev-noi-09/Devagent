@@ -14,11 +14,9 @@ const uploadController = async (req, res) => {
       return res.status(400).json({ error: "No ZIP file uploaded" })
     }
 
-    
     clearStore()
     await index.deleteAll()
 
-    // Step 3 — extract ZIP
     const zip = new AdmZip(req.file.path)
     const zipEntries = zip.getEntries()
 
@@ -26,7 +24,7 @@ const uploadController = async (req, res) => {
     let allChunks = []
 
     for (const entry of zipEntries) {
-      // skip directories
+  
       if (entry.isDirectory) continue
 
       const filePath = entry.entryName
@@ -37,12 +35,9 @@ const uploadController = async (req, res) => {
     
       const content = entry.getData().toString('utf-8')
 
-     
       if (!content.trim() || content.split('\n').length < 5) continue
 
-    
       setFile(filePath, content)
-
 
       const chunks = await chunkFile(filePath, content)
       allChunks = [...allChunks, ...chunks]
@@ -61,7 +56,6 @@ const uploadController = async (req, res) => {
    
     fs.unlinkSync(req.file.path)
 
-    
     return res.status(200).json({
       message: "Project uploaded successfully",
       totalFiles: Object.keys({}).length,
