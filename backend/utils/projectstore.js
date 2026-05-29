@@ -1,17 +1,19 @@
-let fileTree = []
-let fileContents = {}
-
-const setFile = (filePath, content) => {
-  fileTree.push(filePath)
-  fileContents[filePath] = content
+const store = {
+  fileTree: [],
+  fileContents: {}
 }
 
-const getFileContents = () => fileContents
-const getFileTree = () => fileTree
+const setFile = (filePath, content) => {
+  store.fileTree.push(filePath)
+  store.fileContents[filePath] = content
+}
+
+const getFileContents = () => store.fileContents
+const getFileTree = () => store.fileTree
 
 const clearStore = () => {
-  fileTree = []
-  fileContents = {}
+  store.fileTree = []
+  store.fileContents = {}
 }
 
 export { setFile, getFileContents, getFileTree, clearStore }

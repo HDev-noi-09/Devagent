@@ -32,23 +32,23 @@ const uploadController = async (req, res) => {
     for (const entry of zipEntries) {
   
       if (entry.isDirectory) continue
-
+      console.log("Entry found:", entry.entryName)
       const filePath = entry.entryName
 
       
-      if (!shouldProcessFile(filePath)) continue
-
+      if (!shouldProcessFile(filePath)) { console.log("Filtered out:", filePath) ;continue}
+     
     
       const content = entry.getData().toString('utf-8')
 
-      if (!content.trim() || content.split('\n').length < 3) continue
+      if (!content.trim() || content.split('\n').length < 3){console.log("Skipped (too small):", filePath); continue}
 
       setFile(filePath, content)
-
+        console.log("Saved to store:", filePath)
       const chunks = await chunkFile(filePath, content)
       allChunks = [...allChunks, ...chunks]
     }
-
+console.log("fileTree after upload:", getFileTree())
     if (allChunks.length === 0) {
       fs.unlinkSync(req.file.path)
       return res.status(400).json({ error: "No valid files found in ZIP" })
@@ -75,6 +75,8 @@ const uploadController = async (req, res) => {
     if (req.file?.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path)
     }
+   
+
     return res.status(500).json({ error: error.message })
   }
 }
