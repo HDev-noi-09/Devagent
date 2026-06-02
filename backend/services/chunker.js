@@ -4,13 +4,11 @@ const LANGUAGE_MAP = {
   ".js": "js",
   ".jsx": "js",
   ".ts": "ts",
-  ".tsx": "ts",
   ".py": "python",
   ".html": "html",
-  ".css": "css",
-  ".json":"json",
   ".md":"markdown",
-  ".scss":"css"
+  ".java":"java",
+  ".cpp":"cpp"
 }
 
 const getFilename = (filePath) => {

@@ -20,14 +20,11 @@ const tools = [
     type: "function",
     function: {
       name: "search_codebase",
-      description: "Semantically search through the uploaded codebase to find relevant code chunks based on a query",
+      description: "Search codebase semantically for relevant code chunks",
       parameters: {
         type: "object",
         properties: {
-          query: {
-            type: "string",
-            description: "The search query to find relevant code"
-          }
+          query: { type: "string" }
         },
         required: ["query"]
       }
@@ -37,14 +34,11 @@ const tools = [
     type: "function",
     function: {
       name: "get_file",
-      description: "Get the full content of a specific file by its path",
+      description: "Get full content of a file by its exact path",
       parameters: {
         type: "object",
         properties: {
-          filePath: {
-            type: "string",
-            description: "The exact file path to fetch"
-          }
+          filePath: { type: "string" }
         },
         required: ["filePath"]
       }
@@ -54,7 +48,7 @@ const tools = [
     type: "function",
     function: {
       name: "list_files",
-      description: "List all files in the uploaded project to understand its structure",
+      description: "List all files in the uploaded project",
       parameters: {
         type: "object",
         properties: {},
@@ -66,14 +60,11 @@ const tools = [
     type: "function",
     function: {
       name: "find_references",
-      description: "Find all places where a specific function or variable is used across the codebase",
+      description: "Find where a function or variable is used across files",
       parameters: {
         type: "object",
         properties: {
-          name: {
-            type: "string",
-            description: "The function or variable name to search for"
-          }
+          name: { type: "string" }
         },
         required: ["name"]
       }
@@ -83,14 +74,11 @@ const tools = [
     type: "function",
     function: {
       name: "search_by_filename",
-      description: "Search for files by their name or pattern — use this when you need to find a specific file directly",
+      description: "Find files by name pattern",
       parameters: {
         type: "object",
         properties: {
-          pattern: {
-            type: "string",
-            description: "The filename or pattern to search for"
-          }
+          pattern: { type: "string" }
         },
         required: ["pattern"]
       }
@@ -100,18 +88,12 @@ const tools = [
     type: "function",
     function: {
       name: "suggest_fix",
-      description: "Generate a before/after code fix suggestion for a specific bug in a file",
+      description: "Generate before/after fix for a bug in a specific file",
       parameters: {
         type: "object",
         properties: {
-          filePath: {
-            type: "string",
-            description: "The path of the file containing the bug"
-          },
-          bugDescription: {
-            type: "string",
-            description: "Clear description of the bug to fix"
-          }
+          filePath: { type: "string" },
+          bugDescription: { type: "string" }
         },
         required: ["filePath", "bugDescription"]
       }
@@ -121,18 +103,12 @@ const tools = [
     type: "function",
     function: {
       name: "fetch_docs",
-      description: "Fetch relevant official documentation for a technology or concept",
+      description: "Fetch official documentation for a technology",
       parameters: {
         type: "object",
         properties: {
-          technology: {
-            type: "string",
-            description: "The technology to fetch docs for e.g. javascript, node, react, python"
-          },
-          query: {
-            type: "string",
-            description: "The specific concept or topic to search in the docs"
-          }
+          technology: { type: "string" },
+          query: { type: "string" }
         },
         required: ["technology", "query"]
       }
@@ -149,7 +125,7 @@ You have access to 7 tools to explore the codebase:
 - search_by_filename: find files by name or pattern
 - suggest_fix: generate before/after fix for a specific bug
 - fetch_docs: fetch relevant official documentation
-
+- NEVER say "I used suggest_fix" or "list_files returned" — just present the results
 
 Rules:
 - Always explore the codebase using tools before answering
@@ -180,7 +156,8 @@ Rules:
 - Use fetch_docs to point user to relevant documentation instead of explaining yourself
 - Only reveal full fix if user explicitly asks for it multiple times
 - Encourage the developer to think through the problem themselves
-- Be patient, supportive and educational in tone`
+- Be patient, supportive and educational in tone
+- NEVER say "I used suggest_fix" or "list_files returned" — just present the results`
 
 const MAX_TOOL_RESULT_CHARS = 8000
 
@@ -235,7 +212,7 @@ const agentLoop = async (userQuestion, chatHistory=[], mode = "agent") => {
       messages,
       tools,
       tool_choice: "auto",
-      max_tokens: 1024,
+      max_tokens: 2048,
     })
 
     const choice = response.choices[0]
@@ -247,6 +224,7 @@ const agentLoop = async (userQuestion, chatHistory=[], mode = "agent") => {
 
     if (finishReason === "tool_calls") {
       const toolCalls = choice.message.tool_calls
+      console.log("Tool calls:", JSON.stringify(toolCalls, null, 2))
       messages.push(choice.message)
 
       for (const toolCall of toolCalls) {
