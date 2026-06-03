@@ -44,7 +44,7 @@ const uploadController = async (req, res) => {
       if (!content.trim() || content.split('\n').length < 3){console.log("Skipped (too small):", filePath); continue}
 
       setFile(filePath, content)
-        console.log("Saved to store:", filePath)
+        
       const chunks = await chunkFile(filePath, content)
       allChunks = [...allChunks, ...chunks]
     }
