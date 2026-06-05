@@ -1,5 +1,11 @@
 import { agentLoop } from '../services/agentLoop.js'
 import { getFileTree, getFileContents } from '../utils/projectStore.js'
+
+const isSimpleMessage = (text) => {
+  const lower = text.toLowerCase().trim()
+  return SIMPLE_RESPONSES.some(phrase => lower.includes(phrase)) 
+    && lower.length < 50
+}
 const chatController = async (req, res) => {
   try {
     const { question, history ,mode} = req.body

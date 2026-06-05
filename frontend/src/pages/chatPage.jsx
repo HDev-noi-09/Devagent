@@ -84,7 +84,12 @@ function ChatPage() {
     }
   }
 
-  const handleNewProject = () => {
+  const handleNewProject = async () => {
+    try {
+    await axios.delete('/api/reset')
+  } catch (err) {
+    console.log("Reset error:", err)
+  }
     navigate('/')
   }
 

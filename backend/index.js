@@ -2,7 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 dotenv.config()
-import { verifyConnection } from './pineconeClient.js'
+import { verifyConnection ,clearIndex} from './pineconeClient.js'
 import uploadRouter from './routes/upload.js'
 import chatRouter from './routes/chat.js'
 import resetRouter from './routes/reset.js'
@@ -25,5 +25,6 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, async () => {
    await verifyConnection()
+   await clearIndex() 
   console.log(`Server running successfully on port ${PORT}`)
 })

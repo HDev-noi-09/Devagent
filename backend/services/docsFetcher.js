@@ -47,15 +47,15 @@ const fetchDocs = async (technology, query) => {
   }
 
   const searchURL = `${DEVDOCS_BASE_URL}/search?q=${encodeURIComponent(query)}&doc=${normalizedTech}`
-
+console.log("Fetching docs:", searchURL)  
   const response = await fetch(searchURL)
-
+  console.log("Docs response status:", response.status) 
   if (!response.ok) {
     throw new Error(`DevDocs API failed with status: ${response.status}`)
   }
 
   const data = await response.json()
-
+console.log("Docs results:", data)
   if (!data.results || data.results.length === 0) {
     throw new Error(`No documentation found for "${query}" in ${technology}`)
   }
