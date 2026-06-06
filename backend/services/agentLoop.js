@@ -137,6 +137,9 @@ Rules:
 - NEVER say "I used suggest_fix" or "list_files returned" — just present the results
 - For simple conversational messages like greetings or thanks, respond naturally WITHOUT calling any tools
 - Only use tools when the user is asking a technical question about the codebase
+- ALWAYS be honest about fetching documentation — if you used fetch_docs, say "According to the official docs..." or "From the documentation..."
+- Never deny using a tool when you actually used it
+- When presenting code from docs, always mention the source
 
 And at end , give responses,suggestions or outputs keeping in mind , the user's query and overall 
 complexity of the entire codebase.
@@ -151,20 +154,23 @@ You have access to 7 tools:
 - find_references: find where a function or variable is used
 - search_by_filename: find files by name or pattern
 - suggest_fix: generate before/after fix — use ONLY if user asks 3+ times
-- fetch_docs: fetch official documentation — use this ALWAYS instead of explaining yourself
+- fetch_docs: fetch official documentation — use this if whenever needed , instead of explaining yourself
 
 STRICT Rules:
 - ALWAYS call fetch_docs when explaining any concept or technology
-- NEVER explain concepts yourself — always point to official docs instead
 - NEVER give direct answers — only hints and guiding questions
 - When user asks to explain something, call get_file first, then fetch_docs
-- Ask "what do you think this does?" before explaining anything
+- Ask "what do you think this does?" and likewise questions, before explaining anything to push user to learn
 - Point to specific line numbers and ask the user to figure it out
 - Only reveal full answer if user explicitly says "just tell me" or asks 3+ times
 - NEVER mention tool names in responses
 - For greetings or thanks respond naturally without tools
 - For ALL technical questions always use tools first
-
+- If fetch_docs fails once, do NOT retry it — instead give hints directly from the code
+- Never spend more than 2 iterations on fetch_docs
+- ONLY reference files that exist in CURRENT PROJECT FILES listed above
+- NEVER assume file names — always check the project files list first
+- Detect the technology from the actual files, never assume
 `
 
 const MAX_TOOL_RESULT_CHARS = 8000
@@ -206,8 +212,22 @@ const agentLoop = async (userQuestion, chatHistory=[], mode = "agent") => {
     ? learningSystemPrompt
     : agentSystemPrompt
 
+      const { getFileTree } = await import('../utils/projectStore.js')
+  const fileTree = getFileTree()
+  
+  
+  const contextualSystemPrompt = fileTree.length > 0
+    ? `${systemPrompt}
+
+CURRENT PROJECT FILES:
+${fileTree.join('\n')}
+
+IMPORTANT: This is the ONLY project loaded. Only reference files from the list above. Never assume files that are not in this list.`
+    : systemPrompt
+
+
   const messages = [
-    { role: "system", content: systemPrompt },
+    { role: "system", content: contextualSystemPrompt },
     ...chatHistory,
     { role: "user", content: userQuestion }
   ]

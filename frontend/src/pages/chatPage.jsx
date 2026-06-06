@@ -131,7 +131,7 @@ function ChatPage() {
                 style={styles.suggestion}
                 onClick={() => setInput("What files are in this project?")}
               >
-                What files are in this project?
+               What files are in this project?
               </div>
               <div
                 style={styles.suggestion}
@@ -143,13 +143,13 @@ function ChatPage() {
                 style={styles.suggestion}
                 onClick={() => setInput("Explain the overall structure")}
               >
-             Explain the overall structure
+               Explain the overall structure
               </div>
               <div
                 style={styles.suggestion}
                 onClick={() => setInput("How is error handling done?")}
               >
-                 How is error handling done?
+               How is error handling done?
               </div>
             </div>
           </div>
