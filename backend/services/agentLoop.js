@@ -205,10 +205,33 @@ const executeTool = async (toolName, toolArgs) => {
   }
 }
 
+const makeGroqCall = async (messages, tools, retries = 2) => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages,
+        tools,
+        tool_choice: "auto",
+        max_tokens: 2048,
+        temperature: 0.3,
+      })
+      return response
+    } catch (error) {
+      if (error.status === 400 && attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        continue
+      }
+      throw error
+    }
+  }
+}
+
 
 
 const agentLoop = async (userQuestion, chatHistory=[], mode = "agent") => {
-  const systemPrompt = mode === "learning"
+ 
+ const systemPrompt = mode === "learning"
     ? learningSystemPrompt
     : agentSystemPrompt
 
@@ -234,14 +257,10 @@ IMPORTANT: This is the ONLY project loaded. Only reference files from the list a
 
   const MAX_ITERATIONS = 6
 
-  for (let i = 0; i < MAX_ITERATIONS; i++) {
-    const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages,
-      tools,
-      tool_choice: "auto",
-      max_tokens: 2048,
-    })
+ for (let i = 0; i < MAX_ITERATIONS; i++) {
+
+   
+    const response = await makeGroqCall(messages, tools)
 
     const choice = response.choices[0]
     const finishReason = choice.finish_reason
@@ -257,14 +276,12 @@ IMPORTANT: This is the ONLY project loaded. Only reference files from the list a
 
       for (const toolCall of toolCalls) {
         const toolName = toolCall.function.name
-        
 
         let toolResult
 
         try {
           const toolArgs = JSON.parse(toolCall.function.arguments)
           toolResult = await executeTool(toolName, toolArgs)
-
         } catch (error) {
           toolResult = `Tool error: ${error.message}`
         }
@@ -275,7 +292,7 @@ IMPORTANT: This is the ONLY project loaded. Only reference files from the list a
           content: truncateToolResult(toolResult)
         })
       }
-    } else if (finishReason === "length") {
+       } else if (finishReason === "length") {
       return "My response was too long and got cut off. Please ask a more specific question."
     } else {
       return "An unexpected issue occurred. Please try again."
@@ -285,4 +302,4 @@ IMPORTANT: This is the ONLY project loaded. Only reference files from the list a
   return "I was unable to find a complete answer within the allowed steps. Please try rephrasing your question."
 }
 
-export { agentLoop }
+export {agentLoop}
