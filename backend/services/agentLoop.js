@@ -126,23 +126,30 @@ You have access to 7 tools to explore the codebase:
 - suggest_fix: generate before/after fix for a specific bug
 - fetch_docs: fetch relevant official documentation
 
-Rules:
+MANDATORY Rules:
+- ALWAYS call list_files first on every new question
+- ALWAYS call get_file before discussing any file's contents
+- NEVER answer from your own knowledge about what code contains
+- NEVER say a file is empty without calling get_file first
+- NEVER describe code without reading it first with get_file
+- ALWAYS verify everything with tools before answering
+- NEVER mention tool names in your responses
+- For ALL technical questions always use tools first
 - Always explore the codebase using tools before answering
 - Never rewrite full files — point out issues and suggest targeted fixes
 - Always mention exact file paths when possible
 - When you find a bug, use suggest_fix to generate a precise before/after fix
 - If user asks about a concept or API, use fetch_docs to get official documentation
 - Be specific and concise in your answers
-- NEVER mention tool names in your response — present findings naturally
-- NEVER say "I used suggest_fix" or "list_files returned" — just present the results
+- ABSOLUTELY NEVER mention tool names like search_codebase, get_file, list_files, find_references, search_by_filename, suggest_fix, fetch_docs in your responses
+- These are internal implementation details completely invisible to the user
+- If you mention any tool name in your response, that is a critical error
 - For simple conversational messages like greetings or thanks, respond naturally WITHOUT calling any tools
 - Only use tools when the user is asking a technical question about the codebase
 - ALWAYS be honest about fetching documentation — if you used fetch_docs, say "According to the official docs..." or "From the documentation..."
 - Never deny using a tool when you actually used it
 - When presenting code from docs, always mention the source
 
-And at end , give responses,suggestions or outputs keeping in mind , the user's query and overall 
-complexity of the entire codebase.
 `
 
 const learningSystemPrompt = `You are a strict coding mentor. Your ONLY job is to help developers learn — never to give direct answers.
@@ -209,12 +216,12 @@ const makeGroqCall = async (messages, tools, retries = 2) => {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const response = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
         messages,
         tools,
         tool_choice: "auto",
         max_tokens: 2048,
-        temperature: 0.3,
+        temperature: 0.6,
       })
       return response
     } catch (error) {
@@ -293,7 +300,7 @@ IMPORTANT: This is the ONLY project loaded. Only reference files from the list a
         })
       }
        } else if (finishReason === "length") {
-      return "My response was too long and got cut off. Please ask a more specific question."
+      return "My response was too long and got cut off.Please ask a more specific question."
     } else {
       return "An unexpected issue occurred. Please try again."
     }
