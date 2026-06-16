@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 function ChatPage() {
   const [messages, setMessages] = useState([])
@@ -170,7 +173,55 @@ function ChatPage() {
               ...styles.bubble,
               ...(msg.role === 'user' ? styles.userBubble : styles.assistantBubble)
             }}>
-              <pre style={styles.messageText}>{msg.content}</pre>
+             <ReactMarkdown
+  components={{
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || '')
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={oneDark}
+          language={match[1]}
+          PreTag="div"
+          customStyle={{
+            borderRadius: '8px',
+            fontSize: '12px',
+            margin: '8px 0',
+          }}
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code
+          style={{
+            backgroundColor: '#2a2a2a',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            color: '#e06c75'
+          }}
+          {...props}
+        >
+          {children}
+        </code>
+      )
+    },
+    p({ children }) {
+      return <p style={{ margin: '6px 0', lineHeight: '1.6' }}>{children}</p>
+    },
+    ul({ children }) {
+      return <ul style={{ margin: '6px 0', paddingLeft: '20px' }}>{children}</ul>
+    },
+    li({ children }) {
+      return <li style={{ margin: '4px 0' }}>{children}</li>
+    },
+    strong({ children }) {
+      return <strong style={{ color: '#ffffff' }}>{children}</strong>
+    }
+  }}
+>
+  {msg.content}
+</ReactMarkdown>
             </div>
             {msg.role === 'user' && (
               <div style={{ ...styles.avatar, backgroundColor: '#7c3aed' }}>U</div>
@@ -183,7 +234,55 @@ function ChatPage() {
           <div style={{ ...styles.messageRow, justifyContent: 'flex-start' }}>
             <div style={styles.avatar}>DA</div>
             <div style={{ ...styles.bubble, ...styles.assistantBubble }}>
-              <pre style={styles.messageText}>{displayedAnswer}</pre>
+             <ReactMarkdown
+  components={{
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || '')
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={oneDark}
+          language={match[1]}
+          PreTag="div"
+          customStyle={{
+            borderRadius: '8px',
+            fontSize: '12px',
+            margin: '8px 0',
+          }}
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code
+          style={{
+            backgroundColor: '#2a2a2a',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            color: '#e06c75'
+          }}
+          {...props}
+        >
+          {children}
+        </code>
+      )
+    },
+    p({ children }) {
+      return <p style={{ margin: '6px 0', lineHeight: '1.6' }}>{children}</p>
+    },
+    ul({ children }) {
+      return <ul style={{ margin: '6px 0', paddingLeft: '20px' }}>{children}</ul>
+    },
+    li({ children }) {
+      return <li style={{ margin: '4px 0' }}>{children}</li>
+    },
+    strong({ children }) {
+      return <strong style={{ color: '#ffffff' }}>{children}</strong>
+    }
+  }}
+>
+  {displayedAnswer}
+</ReactMarkdown>
             </div>
           </div>
         )}
