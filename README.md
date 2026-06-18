@@ -12,7 +12,7 @@ And the agent gives you reliable and user-oriented , near personalized answers.
 Agent mode:-Normal default mode for building the project,debugging and enhancing it.
 
 ###
-learning mode:-For learning and upskilling along with buildong the project (Currently in progress).
+Learning mode:-For learning and upskilling along with building the project (Currently in progress).
 
 
 
