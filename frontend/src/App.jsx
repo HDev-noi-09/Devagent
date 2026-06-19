@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import UploadPage from './pages/UploadPage'
-import ChatPage from './pages/ChatPage'
+import UploadPage from './pages/uploadPage'
+import ChatPage from './pages/chatPage'
 
 function App() {
   return (
