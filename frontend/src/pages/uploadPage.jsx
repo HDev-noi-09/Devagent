@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api.js'
 
 function UploadPage() {
   const [file, setFile] = useState(null)
@@ -32,7 +32,7 @@ function UploadPage() {
     formData.append('project', file)
 
     try {
-      await axios.post('/api/upload', formData, {
+      await api.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       navigate('/chat')

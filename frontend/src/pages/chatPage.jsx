@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api.js'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -51,7 +51,7 @@ function ChatPage() {
     const recentHistory = updatedMessages.slice(-6)
 
     try {
-      const response = await axios.post('/api/chat', {
+      const response = await api.post('/api/chat', {
         question: userMessage,
         history: recentHistory,
         mode
@@ -89,7 +89,7 @@ function ChatPage() {
 
   const handleNewProject = async () => {
     try {
-    await axios.delete('/api/reset')
+    await api.delete('/api/reset')
   } catch (err) {
     console.log("Reset error:", err)
   }
